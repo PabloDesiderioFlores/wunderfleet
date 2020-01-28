@@ -11,11 +11,17 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
+            buildConfigField "String", "API_URL", "\"https://s3.eu-central-1.amazonaws.com/wunderfleet-recruiting-dev/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            buildConfigField "String", "API_URL", "\"https://s3.eu-central-1.amazonaws.com/wunderfleet-recruiting-dev/\""
         }
     }
 
@@ -67,4 +73,6 @@ dependencies {
     implementation presentationDependencies.gson
     implementation presentationDependencies.gsonConverter
     implementation presentationDependencies.okHttpInterceptor
+
+    implementation presentationDependencies.rxAndroid
 }

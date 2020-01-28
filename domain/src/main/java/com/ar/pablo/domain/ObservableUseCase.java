@@ -17,7 +17,7 @@ public abstract class ObservableUseCase extends BaseUseCase {
         this.postExecutionThread = postExecutionThread;
     }
 
-    abstract Observable buildUseCaseObservable();
+    protected abstract Observable buildUseCaseObservable();
 
     public void execute(DisposableObserver useCaseSubscriber) {
         if (!subscription.isDisposed()) {

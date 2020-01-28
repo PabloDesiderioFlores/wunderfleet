@@ -15,7 +15,7 @@ ext {
     rxAndroidVersion = "2.1.1"
     javaxInjectVersion = "1"
     javaxAnnotationVersion = "1.0"
-    daggerVersion = "2.16"
+    daggerVersion = "2.19"
     daggerAndroidVersion = "2.23.2"
     daggerAndroidCompileVersion = "2.23.2"
     timberVersion = "4.7.1"
@@ -25,6 +25,9 @@ ext {
     gsonConverterVersion = "2.4.0"
     annotationVersion = "1.0"
     glideVersion = "4.8.0"
+    guavaVersion = "28.0-android"
+    guavaProcessorVersion = "28.0-jre"
+    commonCollectionsVersion = "4.0"
 
     //Testing
     jUnitVersion = "4.12"
@@ -52,6 +55,9 @@ ext {
             okHttpInterceptor: "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}",
             gson             : "com.google.code.gson:gson:${gsonVersion}",
             gsonConverter    : "com.squareup.retrofit2:converter-gson:${gsonConverterVersion}",
+            guava            : "com.google.guava:guava:${guavaVersion}",
+            guavaProcessor   : "com.google.guava:guava:${guavaProcessorVersion}",
+            commonCollections: "org.apache.commons:commons-collections4:${commonCollectionsVersion}"
     ]
 
     dataTestDependencies = [
@@ -64,7 +70,7 @@ ext {
             daggerAnddropidSupport  : "com.google.dagger:dagger-android-support:${daggerVersion}",
             daggerCompiler          : "com.google.dagger:dagger-compiler:${daggerVersion}",
             daggerSupport           : "com.google.dagger:dagger-android-support:${daggerVersion}",
-            daggerAndroidProcessor : "com.google.dagger:dagger-android-processor:${daggerVersion}",
+            daggerAndroidProcessor  : "com.google.dagger:dagger-android-processor:${daggerVersion}",
             annotations             : "androidx.annotation:annotation:${androidXVersion}",
             appCompat               : "androidx.appcompat:appcompat:${androidXVersion}",
             recyclerView            : "androidx.recyclerview:recyclerview:${androidXVersion}",
@@ -86,7 +92,8 @@ ext {
             okHttp                  : "com.squareup.okhttp3:okhttp:${okHttpVersion}",
             gson                    : "com.google.code.gson:gson:${gsonVersion}",
             gsonConverter           : "com.squareup.retrofit2:converter-gson:${gsonConverterVersion}",
-            okHttpInterceptor       : "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
+            okHttpInterceptor       : "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}",
+            rxAndroid               : "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
     ]
 
     presentationTestDependencies = [

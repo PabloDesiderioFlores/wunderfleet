@@ -21,6 +21,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
 }
 
@@ -37,4 +41,6 @@ dependencies {
     implementation dataDependencies.okHttpInterceptor
     implementation dataDependencies.gson
     implementation dataDependencies.gsonConverter
+    api dataDependencies.commonCollections
+    api dataDependencies.guava
 }
