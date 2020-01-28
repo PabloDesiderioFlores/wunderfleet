@@ -9,14 +9,14 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 
-public class GetAllCars extends ObservableUseCase {
+public class GetAllCarsUseCase extends ObservableUseCase {
 
     private final CarRepository carRepository;
 
     @Inject
-    public GetAllCars(ThreadExecutor threadExecutor,
-                      PostExecutionThread postExecutionThread,
-                      CarRepository carRepository) {
+    public GetAllCarsUseCase(ThreadExecutor threadExecutor,
+                             PostExecutionThread postExecutionThread,
+                             CarRepository carRepository) {
         super(threadExecutor, postExecutionThread);
         this.carRepository = carRepository;
     }

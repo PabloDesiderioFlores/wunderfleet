@@ -23,6 +23,7 @@ import dagger.android.AndroidInjectionModule;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module(includes = {AndroidInjectionModule.class})
@@ -60,6 +61,7 @@ public class ApplicationModule {
     CarAPI providesCarAPI(OkHttpClient client) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.API_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -80,6 +82,8 @@ public class ApplicationModule {
     }
 
     //Region data store
+    @Provides
+    @Singleton
     CarDataStore providesCarDataStore(CarRestApi carRestApi) {
         return new CarCloudDataStore(carRestApi);
     }

@@ -57,7 +57,7 @@ ext {
             gsonConverter    : "com.squareup.retrofit2:converter-gson:${gsonConverterVersion}",
             guava            : "com.google.guava:guava:${guavaVersion}",
             guavaProcessor   : "com.google.guava:guava:${guavaProcessorVersion}",
-            commonCollections: "org.apache.commons:commons-collections4:${commonCollectionsVersion}"
+            commonCollections: "org.apache.commons:commons-collections4:${commonCollectionsVersion}",
     ]
 
     dataTestDependencies = [
@@ -89,6 +89,7 @@ ext {
             navigationFragment      : "android.arch.navigation:navigation-fragment-ktx:$navigationVersion",
             navigationUi            : "android.arch.navigation:navigation-ui-ktx:$navigationVersion",
             retrofit                : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
+            retrofitRxAdapter       : "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}",
             okHttp                  : "com.squareup.okhttp3:okhttp:${okHttpVersion}",
             gson                    : "com.google.code.gson:gson:${gsonVersion}",
             gsonConverter           : "com.squareup.retrofit2:converter-gson:${gsonConverterVersion}",

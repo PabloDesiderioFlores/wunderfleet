@@ -6,9 +6,9 @@ import androidx.annotation.Nullable;
 
 import com.ar.pablo.wundermobilitytest.R;
 
-import dagger.android.DaggerActivity;
+import dagger.android.support.DaggerAppCompatActivity;
 
-public class MainActivity extends DaggerActivity {
+public class MainActivity extends DaggerAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
