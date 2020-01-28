@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+apply plugin: 'androidx.navigation.safeargs'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.ar.pablo.wundermobilitytest"
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api project(':domain')
+    api project(':data')
+
+    implementation presentationDependencies.annotations
+    implementation presentationDependencies.appCompat
+    implementation presentationDependencies.recyclerView
+    implementation presentationDependencies.design
+    implementation presentationDependencies.constraintLayout
+    implementation presentationDependencies.supportv4
+    implementation presentationDependencies.supportv13
+    implementation presentationDependencies.gridLayout
+    implementation presentationDependencies.cardView
+
+    implementation presentationDependencies.lifeCycleExtension
+    annotationProcessor presentationDependencies.lifeCycleCompiler
+    implementation presentationDependencies.lifeCycleReactiveStreams
+    implementation presentationDependencies.lifeCycleCommonJava
+
+    implementation presentationDependencies.dagger
+    implementation presentationDependencies.daggerAndroid
+    implementation presentationDependencies.daggerAnddropidSupport
+    annotationProcessor presentationDependencies.daggerCompiler
+    annotationProcessor presentationDependencies.daggerAndroidProcessor
+    implementation presentationDependencies.daggerSupport
+
+    implementation presentationDependencies.timber
+
+    implementation presentationDependencies.navigationFragment
+    implementation presentationDependencies.navigationUi
+    implementation presentationDependencies.glide
+
+    implementation presentationDependencies.retrofit
+    implementation presentationDependencies.okHttp
+    implementation presentationDependencies.gson
+    implementation presentationDependencies.gsonConverter
+    implementation presentationDependencies.okHttpInterceptor
+}
