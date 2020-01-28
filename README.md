@@ -1,7 +1,7 @@
 # wunderfleet
 Challenge assignment
 
-Some Libraries use it by this challenge.
+Some Libraries use it in this challenge.
 
 * rxJava
 * rxAndroid
@@ -14,8 +14,8 @@ Some Libraries use it by this challenge.
 * gson
 * glide
 
-*ViewModel
-*LiveData
+* ViewModel
+* LiveData
 
 Clean Architecture + MVVM
 
