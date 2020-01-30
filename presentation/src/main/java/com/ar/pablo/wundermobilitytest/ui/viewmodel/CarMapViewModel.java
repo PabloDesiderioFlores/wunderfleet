@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.ar.pablo.domain.interactor.GetAllCarsUseCase;
 import com.ar.pablo.domain.model.Car;
+import com.ar.pablo.wundermobilitytest.ui.model.CarUi;
+import com.ar.pablo.wundermobilitytest.ui.model.mapper.CarUiMapper;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -16,13 +18,16 @@ import timber.log.Timber;
 public class CarMapViewModel extends ViewModel {
 
     private final GetAllCarsUseCase getAllCarsUseCase;
-    private MutableLiveData<List<Car>> carLiveData;
+    private MutableLiveData<List<CarUi>> carLiveData;
+    private final CarUiMapper carUiMapper;
 
-    public CarMapViewModel(GetAllCarsUseCase getAllCarsUseCase) {
+    public CarMapViewModel(GetAllCarsUseCase getAllCarsUseCase,
+                           CarUiMapper carUiMapper) {
         this.getAllCarsUseCase = getAllCarsUseCase;
+        this.carUiMapper = carUiMapper;
     }
 
-    public LiveData<List<Car>> getCarInfo() {
+    public LiveData<List<CarUi>> getCarInfo() {
         if (carLiveData == null) {
             carLiveData = new MutableLiveData<>();
             loadCarInfo();
@@ -40,6 +45,10 @@ public class CarMapViewModel extends ViewModel {
         getAllCarsUseCase.unsubscribe();
     }
 
+    private void transformCar(List<Car> cars) {
+        carLiveData.setValue(carUiMapper.transform(cars));
+    }
+
     static class GetAllCarsUseCaseSubscriber extends DisposableObserver<List<Car>> {
 
         final WeakReference<CarMapViewModel> viewModelWeakReference;
@@ -53,7 +62,7 @@ public class CarMapViewModel extends ViewModel {
             CarMapViewModel viewModel = viewModelWeakReference.get();
 
             if (viewModel != null) {
-                viewModel.carLiveData.setValue(cars);
+                viewModel.transformCar(cars);
             }
         }
 
