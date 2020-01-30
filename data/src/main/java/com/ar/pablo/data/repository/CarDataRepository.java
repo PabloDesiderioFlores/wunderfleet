@@ -28,4 +28,10 @@ public class CarDataRepository implements CarRepository {
         return carDataStore.getAllCars()
                 .map(carMapper::transform);
     }
+
+    @Override
+    public Observable<Car> getCarById(String carId) {
+        return carDataStore.getCarById(carId)
+                .map(carMapper::transform);
+    }
 }

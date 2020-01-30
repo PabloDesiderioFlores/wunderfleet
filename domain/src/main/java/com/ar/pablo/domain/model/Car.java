@@ -21,6 +21,11 @@ public class Car {
     private String city;
     private Integer locationId;
 
+    private String hardwareId;
+    private Boolean isActivatedByHardware;
+    private String damageDescription;
+    private String vehicleTypeImageUrl;
+
     public Integer getCarId() {
         return carId;
     }
@@ -163,6 +168,38 @@ public class Car {
 
     public void setLocationId(Integer locationId) {
         this.locationId = locationId;
+    }
+
+    public String getHardwareId() {
+        return hardwareId;
+    }
+
+    public void setHardwareId(String hardwareId) {
+        this.hardwareId = hardwareId;
+    }
+
+    public Boolean getActivatedByHardware() {
+        return isActivatedByHardware;
+    }
+
+    public void setActivatedByHardware(Boolean activatedByHardware) {
+        isActivatedByHardware = activatedByHardware;
+    }
+
+    public String getDamageDescription() {
+        return damageDescription;
+    }
+
+    public void setDamageDescription(String damageDescription) {
+        this.damageDescription = damageDescription;
+    }
+
+    public String getVehicleTypeImageUrl() {
+        return vehicleTypeImageUrl;
+    }
+
+    public void setVehicleTypeImageUrl(String vehicleTypeImageUrl) {
+        this.vehicleTypeImageUrl = vehicleTypeImageUrl;
     }
 }
 

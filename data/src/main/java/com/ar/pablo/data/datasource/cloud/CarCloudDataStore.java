@@ -20,4 +20,9 @@ public class CarCloudDataStore implements CarDataStore {
     public Observable<List<CarEntity>> getAllCars() {
         return carRestApi.getAllCars();
     }
+
+    @Override
+    public Observable<CarEntity> getCarById(String carId) {
+        return carRestApi.getCarById(carId);
+    }
 }

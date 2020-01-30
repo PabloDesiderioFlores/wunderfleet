@@ -59,6 +59,18 @@ public class CarEntity {
     @SerializedName("locationId")
     @Expose
     private Integer locationId;
+    @SerializedName("hardwareId")
+    @Expose
+    private String hardwareId;
+    @SerializedName("isActivatedByHardware")
+    @Expose
+    private Boolean isActivatedByHardware;
+    @SerializedName("damageDescription")
+    @Expose
+    private String damageDescription;
+    @SerializedName("vehicleTypeImageUrl")
+    @Expose
+    private String vehicleTypeImageUrl;
 
     public Integer getCarId() {
         return carId;
@@ -202,6 +214,38 @@ public class CarEntity {
 
     public void setLocationId(Integer locationId) {
         this.locationId = locationId;
+    }
+
+    public String getHardwareId() {
+        return hardwareId;
+    }
+
+    public void setHardwareId(String hardwareId) {
+        this.hardwareId = hardwareId;
+    }
+
+    public Boolean getActivatedByHardware() {
+        return isActivatedByHardware;
+    }
+
+    public void setActivatedByHardware(Boolean activatedByHardware) {
+        isActivatedByHardware = activatedByHardware;
+    }
+
+    public String getDamageDescription() {
+        return damageDescription;
+    }
+
+    public void setDamageDescription(String damageDescription) {
+        this.damageDescription = damageDescription;
+    }
+
+    public String getVehicleTypeImageUrl() {
+        return vehicleTypeImageUrl;
+    }
+
+    public void setVehicleTypeImageUrl(String vehicleTypeImageUrl) {
+        this.vehicleTypeImageUrl = vehicleTypeImageUrl;
     }
 }
 

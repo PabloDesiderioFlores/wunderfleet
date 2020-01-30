@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Wunder mobility test</string>
+    <string name="vehicle_image">Vehicle image</string>
+    <string name="title">Title</string>
+    <string name="damage_description">Damage Description</string>
+    <string name="city">City</string>
+    <string name="zip_code">Zip Code</string>
+    <string name="address">Address</string>
+    <string name="pricing_parking">Pricing Parking</string>
+    <string name="pricing_time">Pricing Time</string>
+    <string name="licence_plate">Licence Plate</string>
+    <string name="fuel">Fuel</string>
+    <string name="rent">Rent</string>
+    <string name="no_data">No data available</string>
 </resources>

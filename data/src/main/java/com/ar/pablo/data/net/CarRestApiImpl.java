@@ -22,4 +22,9 @@ public class CarRestApiImpl implements CarRestApi {
     public Observable<List<CarEntity>> getAllCars() {
         return carAPI.getAllCars();
     }
+
+    @Override
+    public Observable<CarEntity> getCarById(String carId) {
+        return carAPI.getCarById(carId);
+    }
 }

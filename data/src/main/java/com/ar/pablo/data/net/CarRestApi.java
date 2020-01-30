@@ -8,4 +8,6 @@ import io.reactivex.Observable;
 
 public interface CarRestApi {
     Observable<List<CarEntity>> getAllCars();
+
+    Observable<CarEntity> getCarById(String carId);
 }

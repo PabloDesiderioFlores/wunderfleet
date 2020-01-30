@@ -112,11 +112,12 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
     }
 
     private void setMarkers(List<CarUi> cars) {
-        for (CarUi vehicles : cars) {
+        for (CarUi vehicle : cars) {
             Marker marker =
                     map.addMarker(new MarkerOptions()
-                            .position(new LatLng(vehicles.getLat(), vehicles.getLon()))
-                            .title(vehicles.getTitle()));
+                            .position(new LatLng(vehicle.getLat(), vehicle.getLon()))
+                            .title(vehicle.getTitle()));
+            marker.setTag(vehicle.getCarId());
 
             markers.add(marker);
         }
@@ -140,7 +141,8 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         marker.showInfoWindow();
 
         if (clickCount == 2) {
-            openDetailView(CarDetailFragment.newInstance(marker.getId()));
+            openDetailView(CarDetailFragment
+                    .newInstance(Objects.requireNonNull(marker.getTag()).toString()));
         }
         return true;
     }

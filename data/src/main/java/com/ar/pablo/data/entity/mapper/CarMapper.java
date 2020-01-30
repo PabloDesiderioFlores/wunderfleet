@@ -43,6 +43,10 @@ public class CarMapper implements Transformer<Car, CarEntity> {
         car.setVehicleStateId(entity.getVehicleStateId());
         car.setVehicleTypeId(entity.getVehicleTypeId());
         car.setZipCode(entity.getZipCode());
+        car.setHardwareId(entity.getHardwareId());
+        car.setActivatedByHardware(entity.getActivatedByHardware());
+        car.setDamageDescription(entity.getDamageDescription());
+        car.setVehicleTypeImageUrl(entity.getVehicleTypeImageUrl());
         return car;
     }
 }
