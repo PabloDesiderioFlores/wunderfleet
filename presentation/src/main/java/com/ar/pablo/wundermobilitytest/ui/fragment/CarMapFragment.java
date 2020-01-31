@@ -46,18 +46,20 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         GoogleMap.OnMarkerClickListener {
 
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private static final int AMOUNT_OF_CLICK_TO_GO_TO_DETAIL = 2;
 
-    public static CarMapFragment newInstance() {
-        return new CarMapFragment();
-    }
-
-    @Inject
-    CarMapViewModelFactory carMapViewModelFactory;
     private CarMapViewModel carMapViewModel;
     private GoogleMap map;
     private MapView mapView;
     private List<Marker> markers = new ArrayList<>();
     private int clickCount = 0;
+
+    @Inject
+    CarMapViewModelFactory carMapViewModelFactory;
+
+    public static CarMapFragment newInstance() {
+        return new CarMapFragment();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,6 +67,24 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         this.carMapViewModel =
                 new ViewModelProvider(this, this.carMapViewModelFactory)
                         .get(CarMapViewModel.class);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Nullable
@@ -75,22 +95,22 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         FragmentCarMapBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_car_map,
                 container, false);
-        mapView = binding.carMapFragment;
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
+        setUpMapView(savedInstanceState, binding);
         return binding.getRoot();
     }
 
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            map.setMyLocationEnabled(true);
-        } else {
-            requestPermissions(new String[]
-                            {Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
-        }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        map.setOnMarkerClickListener(this);
+        enableMyLocation();
+        carMapViewModel.loadCarInfo();
+        carMapViewModel.getCarLiveData().observe(this, this::handleCarInfo);
+        carMapViewModel.getErrorLiveData().observe(this, throwable ->
+                Toast.makeText(getContext(),
+                        "An error has occur trying to fetch vehicles information",
+                        Toast.LENGTH_SHORT).show());
+        setUpMapStyle();
     }
 
     @Override
@@ -106,34 +126,64 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         }
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        clickCount++;
+        removeMarkers(marker);
+        marker.showInfoWindow();
+
+        if (clickCount == AMOUNT_OF_CLICK_TO_GO_TO_DETAIL) {
+            openDetailView(CarDetailFragment
+                    .newInstance(Objects.requireNonNull(marker.getTag()).toString()));
+        }
+        return true;
+    }
+
+    private void removeMarkers(Marker marker) {
+        for (Marker mark : markers) {
+            if (!mark.getId().equals(marker.getId())) {
+                mark.remove();
+            }
+        }
+    }
+
+    private void handleCarInfo(List<CarUi> cars) {
+        if (cars != null) {
+            addMarkers(cars);
+            setBoundingArea();
+        }
+    }
+
+    private void setUpMapView(@Nullable Bundle savedInstanceState, FragmentCarMapBinding binding) {
+        mapView = binding.carMapFragment;
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+    }
+
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            map.setMyLocationEnabled(true);
+        } else {
+            requestPermissions(new String[]
+                            {Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION);
+        }
+    }
+
     private void addMarkers(List<CarUi> cars) {
         for (CarUi vehicle : cars) {
-            Marker marker =
-                    map.addMarker(new MarkerOptions()
-                            .position(new LatLng(vehicle.getLat(), vehicle.getLon()))
-                            .title(vehicle.getTitle()));
+            Marker marker = makeMarker(vehicle);
             marker.setTag(vehicle.getCarId());
             markers.add(marker);
         }
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.setOnMarkerClickListener(this);
-        enableMyLocation();
-        carMapViewModel.loadCarInfo();
-        carMapViewModel.getCarLiveData().observe(this, cars -> {
-            if (cars != null) {
-                addMarkers(cars);
-                setBoundingArea();
-            }
-        });
-        carMapViewModel.getErrorLiveData().observe(this, throwable -> {
-            Toast.makeText(getContext(),
-                    "An error has occur trying to fetch vehicles information", Toast.LENGTH_SHORT).show();
-        });
-        setUpMapStyle();
+    private Marker makeMarker(CarUi vehicle) {
+        return map.addMarker(new MarkerOptions()
+                .position(new LatLng(vehicle.getLat(), vehicle.getLon()))
+                .title(vehicle.getTitle()));
     }
 
     private void setBoundingArea() {
@@ -161,23 +211,6 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         }
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        clickCount++;
-        for (Marker mark : markers) {
-            if (!mark.getId().equals(marker.getId())) {
-                mark.remove();
-            }
-        }
-        marker.showInfoWindow();
-
-        if (clickCount == 2) {
-            openDetailView(CarDetailFragment
-                    .newInstance(Objects.requireNonNull(marker.getTag()).toString()));
-        }
-        return true;
-    }
-
     private void openDetailView(Fragment fragment) {
         FragmentTransaction fragmentTransaction =
                 Objects.requireNonNull(getActivity())
@@ -186,18 +219,6 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
         fragmentTransaction.commit();
-    }
-
-    @Override
-    public void onResume() {
-        mapView.onResume();
-        super.onResume();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mapView.onStart();
     }
 
     @Override
@@ -217,11 +238,5 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
     }
 }

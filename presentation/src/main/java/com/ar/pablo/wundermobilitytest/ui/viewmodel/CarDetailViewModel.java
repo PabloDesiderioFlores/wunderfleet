@@ -39,6 +39,22 @@ public class CarDetailViewModel extends ViewModel {
         this.setCarReservationUseCase.execute(new SetCarReservationUseCaseSubscriber(this));
     }
 
+    public MutableLiveData<Throwable> getCarLiveDataError() {
+        return carLiveDataError;
+    }
+
+    public MutableLiveData<Throwable> getCarReservationLiveDataError() {
+        return carReservationLiveDataError;
+    }
+
+    public MutableLiveData<Car> getCarLiveData() {
+        return carLiveData;
+    }
+
+    public MutableLiveData<CarReservation> getCarReservationLiveData() {
+        return carReservationLiveData;
+    }
+
     static class GetCarByIdUseCaseSubscriber extends DisposableObserver<Car> {
 
         final WeakReference<CarDetailViewModel> viewModelWeakReference;
@@ -99,22 +115,6 @@ public class CarDetailViewModel extends ViewModel {
         public void onComplete() {
             //nothing to do here
         }
-    }
-
-    public MutableLiveData<Throwable> getCarLiveDataError() {
-        return carLiveDataError;
-    }
-
-    public MutableLiveData<Throwable> getCarReservationLiveDataError() {
-        return carReservationLiveDataError;
-    }
-
-    public MutableLiveData<Car> getCarLiveData() {
-        return carLiveData;
-    }
-
-    public MutableLiveData<CarReservation> getCarReservationLiveData() {
-        return carReservationLiveData;
     }
 
     @Override

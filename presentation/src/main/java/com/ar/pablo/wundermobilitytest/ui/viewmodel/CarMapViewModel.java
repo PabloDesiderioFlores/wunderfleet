@@ -18,9 +18,9 @@ import timber.log.Timber;
 public class CarMapViewModel extends ViewModel {
 
     private final GetAllCarsUseCase getAllCarsUseCase;
+    private final CarUiMapper carUiMapper;
     private MutableLiveData<List<CarUi>> carLiveData = new MutableLiveData<>();
     private MutableLiveData<Throwable> errorLiveData = new MutableLiveData<>();
-    private final CarUiMapper carUiMapper;
 
     public CarMapViewModel(GetAllCarsUseCase getAllCarsUseCase,
                            CarUiMapper carUiMapper) {
@@ -32,8 +32,12 @@ public class CarMapViewModel extends ViewModel {
         this.getAllCarsUseCase.execute(new GetAllCarsUseCaseSubscriber(this));
     }
 
-    private void transformCar(List<Car> cars) {
-        carLiveData.setValue(carUiMapper.transform(cars));
+    public LiveData<List<CarUi>> getCarLiveData() {
+        return carLiveData;
+    }
+
+    public LiveData<Throwable> getErrorLiveData() {
+        return errorLiveData;
     }
 
     static class GetAllCarsUseCaseSubscriber extends DisposableObserver<List<Car>> {
@@ -69,12 +73,8 @@ public class CarMapViewModel extends ViewModel {
         }
     }
 
-    public LiveData<List<CarUi>> getCarLiveData() {
-        return carLiveData;
-    }
-
-    public LiveData<Throwable> getErrorLiveData() {
-        return errorLiveData;
+    private void transformCar(List<Car> cars) {
+        carLiveData.setValue(carUiMapper.transform(cars));
     }
 
     @Override
