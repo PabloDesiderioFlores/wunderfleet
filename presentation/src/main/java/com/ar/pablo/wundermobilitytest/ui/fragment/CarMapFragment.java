@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,8 +91,6 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        // Check if location permissions are granted and if so enable the
-        // location data layer.
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0
                     && grantResults[0]
@@ -117,10 +116,15 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         map = googleMap;
         map.setOnMarkerClickListener(this);
         enableMyLocation();
-        carMapViewModel.getCarInfo().observe(this, cars -> {
+        carMapViewModel.loadCarInfo();
+        carMapViewModel.getCarLiveData().observe(this, cars -> {
             if (cars != null) {
                 setMarkers(cars);
             }
+        });
+        carMapViewModel.getErrorLiveData().observe(this, throwable -> {
+            Toast.makeText(getContext(),
+                    "An error has occur trying to fetch vehicles information", Toast.LENGTH_SHORT).show();
         });
     }
 

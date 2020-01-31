@@ -18,7 +18,8 @@ import timber.log.Timber;
 public class CarMapViewModel extends ViewModel {
 
     private final GetAllCarsUseCase getAllCarsUseCase;
-    private MutableLiveData<List<CarUi>> carLiveData;
+    private MutableLiveData<List<CarUi>> carLiveData = new MutableLiveData<>();
+    private MutableLiveData<Throwable> errorLiveData = new MutableLiveData<>();
     private final CarUiMapper carUiMapper;
 
     public CarMapViewModel(GetAllCarsUseCase getAllCarsUseCase,
@@ -27,22 +28,8 @@ public class CarMapViewModel extends ViewModel {
         this.carUiMapper = carUiMapper;
     }
 
-    public LiveData<List<CarUi>> getCarInfo() {
-        if (carLiveData == null) {
-            carLiveData = new MutableLiveData<>();
-            loadCarInfo();
-        }
-        return carLiveData;
-    }
-
-    private void loadCarInfo() {
+    public void loadCarInfo() {
         this.getAllCarsUseCase.execute(new GetAllCarsUseCaseSubscriber(this));
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        getAllCarsUseCase.unsubscribe();
     }
 
     private void transformCar(List<Car> cars) {
@@ -68,6 +55,11 @@ public class CarMapViewModel extends ViewModel {
 
         @Override
         public void onError(Throwable e) {
+            CarMapViewModel viewModel = viewModelWeakReference.get();
+
+            if (viewModel != null) {
+                viewModel.errorLiveData.setValue(e);
+            }
             Timber.e(e);
         }
 
@@ -75,5 +67,19 @@ public class CarMapViewModel extends ViewModel {
         public void onComplete() {
             //nothing to do here
         }
+    }
+
+    public LiveData<List<CarUi>> getCarLiveData() {
+        return carLiveData;
+    }
+
+    public LiveData<Throwable> getErrorLiveData() {
+        return errorLiveData;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        getAllCarsUseCase.unsubscribe();
     }
 }

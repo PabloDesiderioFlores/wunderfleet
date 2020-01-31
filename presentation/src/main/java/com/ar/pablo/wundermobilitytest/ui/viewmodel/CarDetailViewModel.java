@@ -1,6 +1,5 @@
 package com.ar.pablo.wundermobilitytest.ui.viewmodel;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -18,8 +17,11 @@ public class CarDetailViewModel extends ViewModel {
 
     private final GetCarByIdUseCase getCarByIdUseCase;
     private final SetCarReservationUseCase setCarReservationUseCase;
-    private MutableLiveData<Car> carLiveData;
-    private MutableLiveData<CarReservation> carReservationLiveData;
+    private MutableLiveData<Car> carLiveData = new MutableLiveData<>();
+    private MutableLiveData<CarReservation> carReservationLiveData = new MutableLiveData<>();
+    private MutableLiveData<Throwable> carReservationLiveDataError = new MutableLiveData<>();
+    private MutableLiveData<Throwable> carLiveDataError = new MutableLiveData<>();
+
 
     public CarDetailViewModel(GetCarByIdUseCase getCarByIdUseCase,
                               SetCarReservationUseCase setCarReservationUseCase) {
@@ -27,26 +29,14 @@ public class CarDetailViewModel extends ViewModel {
         this.setCarReservationUseCase = setCarReservationUseCase;
     }
 
-    public LiveData<Car> getCarInfoById(String carId) {
-        if (carLiveData == null) {
-            carLiveData = new MutableLiveData<>();
-            loadCarInfo(carId);
-        }
-        return carLiveData;
-    }
-
-    public LiveData<CarReservation> setCarReservation(String carId) {
-        if (carReservationLiveData == null) {
-            carReservationLiveData = new MutableLiveData<>();
-            setReservationCar(carId);
-        }
-        return carReservationLiveData;
-    }
-
-
-    private void loadCarInfo(String carId) {
+    public void getCarInfoById(String carId) {
         this.getCarByIdUseCase.setCarId(carId);
         this.getCarByIdUseCase.execute(new GetCarByIdUseCaseSubscriber(this));
+    }
+
+    public void setCarReservation(String carId) {
+        this.setCarReservationUseCase.setCarId(carId);
+        this.setCarReservationUseCase.execute(new SetCarReservationUseCaseSubscriber(this));
     }
 
     static class GetCarByIdUseCaseSubscriber extends DisposableObserver<Car> {
@@ -68,17 +58,16 @@ public class CarDetailViewModel extends ViewModel {
         @Override
         public void onError(Throwable e) {
             Timber.e(e);
+            CarDetailViewModel viewModel = viewModelWeakReference.get();
+            if (viewModel != null) {
+                viewModel.carLiveDataError.setValue(e);
+            }
         }
 
         @Override
         public void onComplete() {
             //Nothing to do here
         }
-    }
-
-    private void setReservationCar(String carId) {
-        this.setCarReservationUseCase.setCarId(carId);
-        this.setCarReservationUseCase.execute(new SetCarReservationUseCaseSubscriber(this));
     }
 
     static class SetCarReservationUseCaseSubscriber extends DisposableObserver<CarReservation> {
@@ -100,6 +89,10 @@ public class CarDetailViewModel extends ViewModel {
         @Override
         public void onError(Throwable e) {
             Timber.e(e);
+            CarDetailViewModel viewModel = viewModelWeakReference.get();
+            if (viewModel != null) {
+                viewModel.carReservationLiveDataError.setValue(e);
+            }
         }
 
         @Override
@@ -108,9 +101,26 @@ public class CarDetailViewModel extends ViewModel {
         }
     }
 
+    public MutableLiveData<Throwable> getCarLiveDataError() {
+        return carLiveDataError;
+    }
+
+    public MutableLiveData<Throwable> getCarReservationLiveDataError() {
+        return carReservationLiveDataError;
+    }
+
+    public MutableLiveData<Car> getCarLiveData() {
+        return carLiveData;
+    }
+
+    public MutableLiveData<CarReservation> getCarReservationLiveData() {
+        return carReservationLiveData;
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         getCarByIdUseCase.unsubscribe();
+        setCarReservationUseCase.unsubscribe();
     }
 }

@@ -70,24 +70,40 @@ public class CarDetailFragment extends DaggerFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        carDetailViewModel.getCarInfoById(carId).observe(this, car -> {
+        carDetailViewModel.getCarInfoById(carId);
+
+        carDetailViewModel.getCarLiveData().observe(this, car -> {
             if (car != null) {
                 binding.setCar(car);
                 binding.loadingSpinner.setVisibility(View.GONE);
                 binding.containerInfo.setVisibility(View.VISIBLE);
             }
         });
+
+        carDetailViewModel.getCarLiveDataError().observe(this, throwable -> {
+            Toast.makeText(getContext(),
+                    "An error has occur trying to get vehicle detail information", Toast.LENGTH_SHORT).show();
+            binding.loadingSpinner.setVisibility(View.GONE);
+            binding.containerInfo.setVisibility(View.VISIBLE);
+        });
     }
 
     private void onClick(View v) {
         binding.loadingSpinner.setVisibility(View.VISIBLE);
         binding.containerInfo.setVisibility(View.GONE);
-        carDetailViewModel.setCarReservation(carId).observe(this, carReservation -> {
+        carDetailViewModel.setCarReservation(carId);
+        carDetailViewModel.getCarReservationLiveData().observe(this, carReservation -> {
             binding.loadingSpinner.setVisibility(View.GONE);
             binding.containerInfo.setVisibility(View.VISIBLE);
-            Toast.makeText(getContext(), "Car Reserved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Car has been reserved", Toast.LENGTH_SHORT).show();
             FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
             fm.popBackStack();
+        });
+
+        carDetailViewModel.getCarReservationLiveDataError().observe(this, throwable -> {
+            binding.loadingSpinner.setVisibility(View.GONE);
+            binding.containerInfo.setVisibility(View.VISIBLE);
+            Toast.makeText(getContext(), "An error has occur trying to reserve this car", Toast.LENGTH_SHORT).show();
         });
     }
 }
