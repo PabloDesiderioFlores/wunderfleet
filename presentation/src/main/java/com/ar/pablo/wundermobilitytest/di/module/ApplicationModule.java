@@ -6,6 +6,7 @@ import com.ar.pablo.data.executor.JobExecutor;
 import com.ar.pablo.data.net.CarRestApi;
 import com.ar.pablo.data.net.CarRestApiImpl;
 import com.ar.pablo.data.net.retrofit.CarAPI;
+import com.ar.pablo.data.net.retrofit.CarReservationAPI;
 import com.ar.pablo.data.repository.CarDataRepository;
 import com.ar.pablo.domain.executor.PostExecutionThread;
 import com.ar.pablo.domain.executor.ThreadExecutor;
@@ -66,6 +67,18 @@ public class ApplicationModule {
                 .client(client)
                 .build();
         return retrofit.create(CarAPI.class);
+    }
+
+    @Provides
+    @Singleton
+    CarReservationAPI providesCarReservationApi(OkHttpClient client) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BuildConfig.API_URL_POST)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        return retrofit.create(CarReservationAPI.class);
     }
 
     @Provides

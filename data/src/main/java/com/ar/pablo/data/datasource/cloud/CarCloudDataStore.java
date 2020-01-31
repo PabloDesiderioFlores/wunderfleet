@@ -2,6 +2,7 @@ package com.ar.pablo.data.datasource.cloud;
 
 import com.ar.pablo.data.datasource.CarDataStore;
 import com.ar.pablo.data.entity.model.CarEntity;
+import com.ar.pablo.data.entity.model.CarReservationEntity;
 import com.ar.pablo.data.net.CarRestApi;
 
 import java.util.List;
@@ -24,5 +25,10 @@ public class CarCloudDataStore implements CarDataStore {
     @Override
     public Observable<CarEntity> getCarById(String carId) {
         return carRestApi.getCarById(carId);
+    }
+
+    @Override
+    public Observable<CarReservationEntity> setCarReservation(String carId) {
+        return carRestApi.setCarReservation(carId);
     }
 }

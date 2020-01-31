@@ -4,18 +4,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.ar.pablo.domain.model.Car;
 import com.ar.pablo.wundermobilitytest.R;
 import com.ar.pablo.wundermobilitytest.databinding.FragmentCarDetailBinding;
 import com.ar.pablo.wundermobilitytest.ui.viewmodel.CarDetailViewModel;
 import com.ar.pablo.wundermobilitytest.ui.viewmodel.viewmodelfactory.CarDetailViewModelFactory;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -60,9 +62,7 @@ public class CarDetailFragment extends DaggerFragment {
                 R.layout.fragment_car_detail,
                 container, false);
 
-        binding.btnRent.setOnClickListener(v -> {
-
-        });
+        binding.btnRent.setOnClickListener(this::onClick);
 
         return binding.getRoot();
     }
@@ -73,7 +73,21 @@ public class CarDetailFragment extends DaggerFragment {
         carDetailViewModel.getCarInfoById(carId).observe(this, car -> {
             if (car != null) {
                 binding.setCar(car);
+                binding.loadingSpinner.setVisibility(View.GONE);
+                binding.containerInfo.setVisibility(View.VISIBLE);
             }
+        });
+    }
+
+    private void onClick(View v) {
+        binding.loadingSpinner.setVisibility(View.VISIBLE);
+        binding.containerInfo.setVisibility(View.GONE);
+        carDetailViewModel.setCarReservation(carId).observe(this, carReservation -> {
+            binding.loadingSpinner.setVisibility(View.GONE);
+            binding.containerInfo.setVisibility(View.VISIBLE);
+            Toast.makeText(getContext(), "Car Reserved", Toast.LENGTH_SHORT).show();
+            FragmentManager fm = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+            fm.popBackStack();
         });
     }
 }

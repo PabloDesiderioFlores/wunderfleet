@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.ar.pablo.domain.interactor.GetCarByIdUseCase;
+import com.ar.pablo.domain.interactor.SetCarReservationUseCase;
 import com.ar.pablo.domain.model.Car;
+import com.ar.pablo.domain.model.CarReservation;
 
 import java.lang.ref.WeakReference;
 
@@ -15,10 +17,14 @@ import timber.log.Timber;
 public class CarDetailViewModel extends ViewModel {
 
     private final GetCarByIdUseCase getCarByIdUseCase;
+    private final SetCarReservationUseCase setCarReservationUseCase;
     private MutableLiveData<Car> carLiveData;
+    private MutableLiveData<CarReservation> carReservationLiveData;
 
-    public CarDetailViewModel(GetCarByIdUseCase getCarByIdUseCase) {
+    public CarDetailViewModel(GetCarByIdUseCase getCarByIdUseCase,
+                              SetCarReservationUseCase setCarReservationUseCase) {
         this.getCarByIdUseCase = getCarByIdUseCase;
+        this.setCarReservationUseCase = setCarReservationUseCase;
     }
 
     public LiveData<Car> getCarInfoById(String carId) {
@@ -27,6 +33,14 @@ public class CarDetailViewModel extends ViewModel {
             loadCarInfo(carId);
         }
         return carLiveData;
+    }
+
+    public LiveData<CarReservation> setCarReservation(String carId) {
+        if (carReservationLiveData == null) {
+            carReservationLiveData = new MutableLiveData<>();
+            setReservationCar(carId);
+        }
+        return carReservationLiveData;
     }
 
 
@@ -59,6 +73,38 @@ public class CarDetailViewModel extends ViewModel {
         @Override
         public void onComplete() {
             //Nothing to do here
+        }
+    }
+
+    private void setReservationCar(String carId) {
+        this.setCarReservationUseCase.setCarId(carId);
+        this.setCarReservationUseCase.execute(new SetCarReservationUseCaseSubscriber(this));
+    }
+
+    static class SetCarReservationUseCaseSubscriber extends DisposableObserver<CarReservation> {
+
+        final WeakReference<CarDetailViewModel> viewModelWeakReference;
+
+        SetCarReservationUseCaseSubscriber(CarDetailViewModel viewModel) {
+            viewModelWeakReference = new WeakReference<>(viewModel);
+        }
+
+        @Override
+        public void onNext(CarReservation carReservation) {
+            CarDetailViewModel viewModel = viewModelWeakReference.get();
+            if (viewModel != null) {
+                viewModel.carReservationLiveData.setValue(carReservation);
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Timber.e(e);
+        }
+
+        @Override
+        public void onComplete() {
+            //nothing to do here
         }
     }
 

@@ -21,6 +21,7 @@ android {
 
         debug {
             buildConfigField "String", "API_URL", "\"https://s3.eu-central-1.amazonaws.com/wunderfleet-recruiting-dev/\""
+            buildConfigField "String", "API_URL_POST", "\"https://4i96gtjfia.execute-api.eu-central-1.amazonaws.com/default/\""
         }
     }
 

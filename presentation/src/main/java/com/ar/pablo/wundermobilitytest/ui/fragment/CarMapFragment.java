@@ -52,6 +52,14 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
     private List<Marker> markers = new ArrayList<>();
     private int clickCount = 0;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.carMapViewModel =
+                new ViewModelProvider(this, this.carMapViewModelFactory)
+                        .get(CarMapViewModel.class);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,24 +72,6 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         return binding.getRoot();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.carMapViewModel =
-                new ViewModelProvider(this, this.carMapViewModelFactory)
-                        .get(CarMapViewModel.class);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        carMapViewModel.getCarInfo().observe(this, cars -> {
-            if (cars != null) {
-                setMarkers(cars);
-            }
-        });
     }
 
     private void enableMyLocation() {
@@ -118,7 +108,6 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
                             .position(new LatLng(vehicle.getLat(), vehicle.getLon()))
                             .title(vehicle.getTitle()));
             marker.setTag(vehicle.getCarId());
-
             markers.add(marker);
         }
     }
@@ -128,6 +117,11 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         map = googleMap;
         map.setOnMarkerClickListener(this);
         enableMyLocation();
+        carMapViewModel.getCarInfo().observe(this, cars -> {
+            if (cars != null) {
+                setMarkers(cars);
+            }
+        });
     }
 
     @Override
@@ -179,6 +173,7 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
     public void onStop() {
         super.onStop();
         mapView.onStop();
+        clickCount = 0;
     }
 
     @Override
