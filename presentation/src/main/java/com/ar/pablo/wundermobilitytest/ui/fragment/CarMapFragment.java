@@ -2,6 +2,7 @@ package com.ar.pablo.wundermobilitytest.ui.fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -35,6 +37,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
+import timber.log.Timber;
 
 public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener {
@@ -126,6 +129,21 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
             Toast.makeText(getContext(),
                     "An error has occur trying to fetch vehicles information", Toast.LENGTH_SHORT).show();
         });
+        setUpMapStyle();
+    }
+
+    private void setUpMapStyle() {
+        try {
+            boolean success = map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            Objects.requireNonNull(getActivity()), R.raw.map_style));
+
+            if (!success) {
+                Timber.e("Style parsing filed");
+            }
+        } catch (Resources.NotFoundException e) {
+            Timber.e(e, "Can't find style. Error: ");
+        }
     }
 
     @Override
