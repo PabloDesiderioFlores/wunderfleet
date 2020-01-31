@@ -22,10 +22,13 @@ import com.ar.pablo.wundermobilitytest.databinding.FragmentCarMapBinding;
 import com.ar.pablo.wundermobilitytest.ui.model.CarUi;
 import com.ar.pablo.wundermobilitytest.ui.viewmodel.CarMapViewModel;
 import com.ar.pablo.wundermobilitytest.ui.viewmodel.viewmodelfactory.CarMapViewModelFactory;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -103,7 +106,7 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         }
     }
 
-    private void setMarkers(List<CarUi> cars) {
+    private void addMarkers(List<CarUi> cars) {
         for (CarUi vehicle : cars) {
             Marker marker =
                     map.addMarker(new MarkerOptions()
@@ -122,7 +125,8 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
         carMapViewModel.loadCarInfo();
         carMapViewModel.getCarLiveData().observe(this, cars -> {
             if (cars != null) {
-                setMarkers(cars);
+                addMarkers(cars);
+                setBoundingArea();
             }
         });
         carMapViewModel.getErrorLiveData().observe(this, throwable -> {
@@ -130,6 +134,17 @@ public class CarMapFragment extends DaggerFragment implements OnMapReadyCallback
                     "An error has occur trying to fetch vehicles information", Toast.LENGTH_SHORT).show();
         });
         setUpMapStyle();
+    }
+
+    private void setBoundingArea() {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = 0;
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        map.animateCamera(cameraUpdate);
     }
 
     private void setUpMapStyle() {
